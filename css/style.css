@@ -1,0 +1,59 @@
+body {
+	font-family: 'Josefin Sans', sans-serif;
+}
+td, th {
+  padding-right: 90px;
+}
+td {
+	padding-top: 15px;
+}
+table {
+	margin-left: 80px;
+}
+.price {
+	width: 50px;
+	border: none;
+	border-radius: 3px;
+	/*text-align: right;*/
+}
+a{
+	text-decoration: none;
+	color: #551A8B;
+}
+.background{
+	height: 20px;
+}
+.background:hover{
+	background-color: gray;
+	width: 100%;
+	border-radius: 3px;
+	padding-top: 5px;
+	cursor: pointer;
+	color: white;
+}
+img {
+	height: 40px;
+	width: 50px;
+	border-radius: 50%;
+}
+input[type=file] {
+	padding-left: 10px;
+	width: 100px;
+	padding-bottom: 10px;
+}
+input[type=submit]{
+	height: 30px;
+	width: 100px;
+	background-color: lightblue;
+	border: none;
+	border-radius: 5px;
+	font-weight: bold;
+	float: right;
+	margin: 0 15px 10px 0;
+}
+input[type=submit]:hover {
+	background-color: blue;
+	cursor: pointer;
+	font-weight: bold;
+	color: white;
+}
