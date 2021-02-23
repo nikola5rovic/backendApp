@@ -1,13 +1,13 @@
 <?php
 
 class Database{
-    protected $host = "localhost";
-    protected $user = "root";
-    protected $pass = "";
-    protected $dbnm = "backend_app";
-    protected $dbh;
-    protected $errmsg;
-    protected $stmt;
+    private $host = "localhost";
+    private $user = "root";
+    private $pass = "";
+    private $dbnm = "backend_app";
+    private $dbh;
+    private $errmsg;
+    private $stmt;
 
     public function __construct(){
         $dsn ="mysql:host=" . $this->host . "; dbname=" . $this->dbnm; 
