@@ -9,7 +9,7 @@ class Admin extends Database {
 
 	private $errMsg;
 	public $regexEmail = "/^(?!.*\.\.)[\w.\-#!$%&'*+\/=?^_`{}|~]{1,35}@[\w.\-]{1,15}\.[a-zA-Z]{2,15}$/";
-	public $regexPass = "^\S*(?=\S{11,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\W])(?=\S*[\d])\S*$^";
+	public $regexPass = "/\S*(?=\S{11,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\W])(?=\S*[\d])\S*$/";
 
 	public function logAdmin($email, $password) {
 		//Authenticate credentials
@@ -159,7 +159,7 @@ class Admin extends Database {
 			echo $errMsg;
 			echo "<script>window.open('adm_management.php', '_self');</script>";
 		} elseif (!preg_match($this->regexPass, $passwordCheck)) {
-			$errMsg = "<script>alert('A password must start with a number. It must contain lower & upper letter a special character and must be at least 11 charachters long!');</script>";
+			$errMsg = "<script>alert('A password must contain minimum of lower & upper letter, special character, a number and be at least 11 charachters long!');</script>";
 			echo $errMsg;
 			echo "<script>window.open('adm_management.php', '_self');</script>";
 		} elseif (!preg_match($this->regexEmail, $emailCheck)) {
