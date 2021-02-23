@@ -13,7 +13,7 @@ $adminObj = new Admin();
 
 if(isset($_POST['admAdd'])) {
 	$adminObj->uniqueAdm($_POST['addEmail']);
-	$adminObj->addAdmin($_FILES['addImg']['name'],  $_POST['addEmail'], md5($_POST['addPass']), $_POST['addName']);
+	$adminObj->addAdmin($_FILES['addImg']['name'],  $_POST['addEmail'], $_POST['addPass'], $_POST['addName']);
 }
 ?>
 <body>

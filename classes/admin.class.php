@@ -6,6 +6,7 @@ class Admin extends Database {
 	private $password;
 	private $name;
 	private $uniqueAdm;
+	private $admCheck;
 
 	private $errMsg;
 	public $regexEmail = "/^(?!.*\.\.)[\w.\-#!$%&'*+\/=?^_`{}|~]{1,35}@[\w.\-]{1,15}\.[a-zA-Z]{2,15}$/";
@@ -81,11 +82,12 @@ class Admin extends Database {
 	//Method for adding a new Admin
 	public function addAdmin($image, $email, $password, $name) {
 		$this->uniqueAdm($email);
+		$this->logAuth($email, $password);
 
-		if ($this->uniqueAdm == true) {} 
+		if ($this->uniqueAdm == true && $this->admCheck == false) {} 
 		else {
-			$this->email = $email;
-			$this->password = $password;
+			//$this->email = $email;
+			//$this->password = $password;
 			$this->name = $name;
 
 			$this->image = $image;
@@ -119,7 +121,7 @@ class Admin extends Database {
 		$run = $this->execute();
 	}
 
-	//Check if admin exists
+	//Check if admin exists method only for deleteing Admin
 	public function ifAdminExists($email) {
 		$this->email = $email;
 
@@ -155,14 +157,17 @@ class Admin extends Database {
 	//Mehod for authentication the Admins email and password
 	public function logAuth($emailCheck, $passwordCheck) {
 		if (!preg_match($this->regexEmail, $emailCheck) && !preg_match($this->regexPass, $passwordCheck)) {
+			$this->admCheck = false;
 			$errMsg = "<script>alert('The email & password are not valid');</script>";
 			echo $errMsg;
 			echo "<script>window.open('adm_management.php', '_self');</script>";
 		} elseif (!preg_match($this->regexPass, $passwordCheck)) {
+			$this->admCheck = false;
 			$errMsg = "<script>alert('A password must contain minimum of lower & upper letter, special character, a number and be at least 11 charachters long!');</script>";
 			echo $errMsg;
 			echo "<script>window.open('adm_management.php', '_self');</script>";
 		} elseif (!preg_match($this->regexEmail, $emailCheck)) {
+			$this->admCheck = false;
 			echo "<script>alert('The email format is not valid');</script>";
 			echo "<script>window.open('adm_management.php', '_self');</script>";
 		} elseif (preg_match($this->regexEmail, $emailCheck) && preg_match($this->regexPass, $passwordCheck)) {
@@ -174,8 +179,9 @@ class Admin extends Database {
 			$user = $this->fetchMultiple();
 
 			if(!$user) {
-				echo "<script>alert('User doesn\'t exist! Try again.');</script>";
+				echo "<script>alert('User doesn\'t exist');</script>";
 			} else {
+				$this->admCheck = true;
 				$this->password = md5($passwordCheck);
 		    	$this->email = $emailCheck;
 			}
