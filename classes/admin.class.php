@@ -61,7 +61,6 @@ class Admin extends Database {
 		$this->bindvalue(":ADMPASS", $this->password);
 		$this->bindvalue(":ADMNAME", $this->name);
 		$this->execute();
-		$_SESSION['a_user'] = $this->email;
 		} else {
 			$this->image = $image;
 			$adm_tmp_img = $_FILES['admImg']['tmp_name'];
@@ -73,7 +72,6 @@ class Admin extends Database {
 			$this->bindvalue(":ADMPASS", $this->password);
 			$this->bindvalue(":ADMNAME", $this->name);
 			$this->execute();
-			$_SESSION['a_user'] = $this->email;
 		}
 
 		header("Location: adm_management.php");
