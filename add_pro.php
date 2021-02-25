@@ -12,7 +12,7 @@ require_once 'inc/bodyright_pro.php';
 $productObj = new Product();	
 
 if(isset($_POST['proAdd'])) {
-	$productObj->addProduct($_POST['addTitle'], $_POST['addPrice'], $_POST['addStock']);
+	$productObj->addProduct($_FILES['addImg']['name'], $_POST['addTitle'], $_POST['addPrice'], $_POST['addStock']);
 }
 ?>
 <body>

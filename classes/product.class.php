@@ -30,12 +30,13 @@ class Product extends Database {
 		}
 	}
 
-	public function addProduct($title, $price, $stock) {
+	public function addProduct($image, $title, $price, $stock) {
+		$this->checkImgExt($image);
+
 		$this->title = $title;
 		$this->price = $price;
 		$this->stock = $stock;
 
-		$this->image = $_FILES['addImg']['name'];
 		$add_tmp_img = $_FILES['addImg']['tmp_name'];
 		move_uploaded_file($add_tmp_img, "img/products/$this->image");
 
@@ -58,25 +59,17 @@ class Product extends Database {
 	}
 
 	public function updtProduct($id, $image, $title, $price, $stock) {
+		$this->checkImgExt($image);
 		$this->id = $id;
 		$this->title = $title;
 		$this->price = $price;
 		$this->stock = $stock;
 		
-		
 		if ($_FILES['proImg']['tmp_name'] == "") {
-			$this->query("UPDATE products SET pro_title=:PROTITLE, pro_price=:PROPRICE, pro_stock=:PROSTOCK WHERE pro_id=:PROID");
-			$this->bindvalue(":PROID", $this->id);
-			$this->bindvalue(":PROTITLE", $this->title);
-			$this->bindvalue(":PROPRICE", $this->price);
-			$this->bindvalue(":PROSTOCK", $this->stock);
-			$run = $this->execute();
-
-			if (!isset($run)) {
-				echo "<script>alert('Something went wrong and data could not be edited at this time. Try again later!');</script>";
-			}
+			echo "<script>alert('Product must contain an image!');
+				window.open('products.php','_self');
+			</script>";
 		} else {
-			$this->image = $_FILES['proImg']['name'];
 			$pro_tmp_img = $_FILES['proImg']['tmp_name'];
 			move_uploaded_file($pro_tmp_img, "img/products/$this->image");
 			$this->query("UPDATE products SET pro_img=:PROIMG, pro_title=:PROTITLE, pro_price=:PROPRICE, pro_stock=:PROSTOCK WHERE pro_id=:PROID");
@@ -111,6 +104,22 @@ class Product extends Database {
 		}
 
 		header("Location: products.php");
+	}
+
+	public function checkImgExt($imageCheck) {
+		$allowed_ext = array('jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG', '.gif', '.GIF');
+	    $filename =  $imageCheck;
+	    $file_ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+	    if (!in_array($file_ext, $allowed_ext)) {
+	    	echo "<script>alert('Image format must extend as .jpg, .jpeg or .png');
+	    		window.open('products.php', '_self');
+	    	</script>";
+	    } elseif ($imageCheck == $_FILES['proImg']['tmp_name']) {
+	    	return $this->image = $imageCheck;
+	    } else {
+	    	return $this->image = $imageCheck;
+	    }
 	}
 }
 
