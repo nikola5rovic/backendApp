@@ -47,22 +47,38 @@ class Admin extends Database {
 		return $this->fetchMultiple();
 	}
 
+	public function checkImgExt($imageCheck) {
+		$allowed_ext = array('jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG', '.gif', '.GIF');
+	    $filename =  $imageCheck;
+	    $file_ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+	    if (!in_array($file_ext, $allowed_ext)) {
+	    	echo "<script>alert('Image format must extend as .jpg, .jpeg or .png');
+	    		window.open('adm_management.php', '_self');
+	    	</script>";
+	    } elseif($imageCheck == $_FILES['admImg']['tmp_name']) {
+	    	return $this->image = $imageCheck;
+	    } else {
+	    	return $this->image = $imageCheck;
+	    }
+	}
+
 	//Method for updating an Admin
 	public function updtAdmin($id, $image, $email, $password, $name) {
-		$this->logAuth($email, $password);
-		
+		$this->updtAuth($email, $password);
+		$this->checkImgExt($image);
+
 		$this->id = $id;
 		$this->name = $name;
 
-		if ($_FILES['admImg']['tmp_name'] == "") {
-		$this->query("UPDATE admin SET admin_email=:ADMEMAIL, admin_password=:ADMPASS, admin_name=:ADMNAME WHERE admin_id=:ADMID");
-		$this->bindvalue(":ADMID", $this->id);
-		$this->bindvalue(":ADMEMAIL", $this->email);
-		$this->bindvalue(":ADMPASS", $this->password);
-		$this->bindvalue(":ADMNAME", $this->name);
-		$this->execute();
+		if ($_FILES['admImg']['tmp_name'] == "") {	
+			$this->query("UPDATE admin SET admin_email=:ADMEMAIL, admin_password=:ADMPASS, admin_name=:ADMNAME WHERE admin_id=:ADMID");
+			$this->bindvalue(":ADMID", $this->id);
+			$this->bindvalue(":ADMEMAIL", $this->email);
+			$this->bindvalue(":ADMPASS", $this->password);
+			$this->bindvalue(":ADMNAME", $this->name);
+			$this->execute();
 		} else {
-			$this->image = $image;
 			$adm_tmp_img = $_FILES['admImg']['tmp_name'];
 			move_uploaded_file($adm_tmp_img, "img/admins/$this->image");
 			$this->query("UPDATE admin SET admin_picture=:ADMPIC, admin_email=:ADMEMAIL, admin_password=:ADMPASS, admin_name=:ADMNAME WHERE admin_id=:ADMID");
@@ -73,22 +89,18 @@ class Admin extends Database {
 			$this->bindvalue(":ADMNAME", $this->name);
 			$this->execute();
 		}
-
 		header("Location: adm_management.php");
-	} 
+	}
 
 	//Method for adding a new Admin
 	public function addAdmin($image, $email, $password, $name) {
 		$this->uniqueAdm($email);
 		$this->logAuth($email, $password);
+		$imageValid = $this->checkImgExt($image);
 
-		if ($this->uniqueAdm == true && $this->admCheck == false) {} 
+		if ($this->uniqueAdm == true && $this->admCheck == false && !$imageValid) {} 
 		else {
-			//$this->email = $email;
-			//$this->password = $password;
 			$this->name = $name;
-
-			$this->image = $image;
 			$add_tmp_img = $_FILES['addImg']['tmp_name'];
 			move_uploaded_file($add_tmp_img, "img/admins/$this->image");
 
@@ -136,6 +148,7 @@ class Admin extends Database {
 		}
 	}
 
+	// Method for unique email check
 	public function uniqueAdm($email) {
 		$this->email = $email;
 
@@ -183,6 +196,28 @@ class Admin extends Database {
 				$this->password = md5($passwordCheck);
 		    	$this->email = $emailCheck;
 			}
+		}
+	}
+
+	public function updtAuth($emailCheck, $passwordCheck) {
+		if (!preg_match($this->regexEmail, $emailCheck) && !preg_match($this->regexPass, $passwordCheck)) {
+			$this->admCheck = false;
+			$errMsg = "<script>alert('The email & password are not valid');</script>";
+			echo $errMsg;
+			echo "<script>window.open('adm_management.php', '_self');</script>";
+		} elseif (!preg_match($this->regexPass, $passwordCheck)) {
+			$this->admCheck = false;
+			$errMsg = "<script>alert('A password must contain minimum of lower & upper letter, special character, a number and be at least 11 charachters long!');</script>";
+			echo $errMsg;
+			echo "<script>window.open('adm_management.php', '_self');</script>";
+		} elseif (!preg_match($this->regexEmail, $emailCheck)) {
+			$this->admCheck = false;
+			echo "<script>alert('The email format is not valid');</script>";
+			echo "<script>window.open('adm_management.php', '_self');</script>";
+		} else {
+			$_SESSION['a_user'] = $emailCheck;
+			$this->password = md5($passwordCheck);
+	    	$this->email = $emailCheck;
 		}
 	}
 }
