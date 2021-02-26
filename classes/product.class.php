@@ -66,9 +66,16 @@ class Product extends Database {
 		$this->stock = $stock;
 		
 		if ($_FILES['proImg']['tmp_name'] == "") {
-			echo "<script>alert('Product must contain an image!');
-				window.open('products.php','_self');
-			</script>";
+			$this->query("UPDATE products SET pro_title=:PROTITLE, pro_price=:PROPRICE, pro_stock=:PROSTOCK WHERE pro_id=:PROID");
+			$this->bindvalue(":PROID", $this->id);
+			$this->bindvalue(":PROTITLE", $this->title);
+			$this->bindvalue(":PROPRICE", $this->price);
+			$this->bindvalue(":PROSTOCK", $this->stock);
+			$run = $this->execute();
+
+			if (!isset($run)) {
+				echo "<script>alert('Something went wrong and data could not be edited at this time. Try again later!');</script>";
+			}
 		} else {
 			$pro_tmp_img = $_FILES['proImg']['tmp_name'];
 			move_uploaded_file($pro_tmp_img, "img/products/$this->image");
